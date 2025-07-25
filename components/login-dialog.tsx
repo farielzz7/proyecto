@@ -35,7 +35,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
 
     try {
       // Petición a la API de login
-      const response = await fetch('/api/login', {
+      const response = await fetch('https://uni-djzy.onrender.com/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { TermsModal } from "@/components/terms-modal"
 
 interface RegisterDialogProps {
   open: boolean
@@ -285,6 +286,8 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [searchNacionalidad, setSearchNacionalidad] = useState("")
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
 
   // Calcular edad basada en fecha de nacimiento
   const edad = useMemo(() => {
@@ -297,6 +300,18 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
     }
     return age
   }, [birthDate])
+
+  // Función para calcular edad de forma segura
+  const calcularEdad = (fecha: Date | null) => {
+    if (!fecha) return null
+    const today = new Date()
+    let age = today.getFullYear() - fecha.getFullYear()
+    const monthDiff = today.getMonth() - fecha.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < fecha.getDate())) {
+      age--
+    }
+    return age
+  }
 
   // Generar arrays para los selectores de fecha
   const currentYear = new Date().getFullYear()
@@ -340,6 +355,17 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
     setError(null)
     setSuccess(null)
 
+    // Validar fecha de nacimiento
+    if (!birthDate) {
+      setError("Debes seleccionar tu fecha de nacimiento")
+      return
+    }
+    const edadCalculada = calcularEdad(birthDate)
+    if (edadCalculada === null || edadCalculada < 0 || edadCalculada > 120) {
+      setError("La fecha de nacimiento no es válida")
+      return
+    }
+
     if (!acceptTerms) {
       setError("Debes aceptar los términos y condiciones")
       return
@@ -360,7 +386,7 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
           nombre,
           apellido,
           nacionalidad,
-          edad: edad,
+          edad: edadCalculada, // Usar edad calculada segura
           telefono,
           email,
           password,
@@ -458,14 +484,30 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
                   <SelectValue placeholder="Selecciona tu país" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[200px]">
-                  {countries.map((country) => (
-                    <SelectItem key={country.code} value={country.name}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{country.flag}</span>
-                        <span>{country.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
+                  {/* Input de búsqueda */}
+                  <div className="px-2 py-1 sticky top-0 bg-white z-10">
+                    <Input
+                      type="text"
+                      placeholder="Buscar país..."
+                      value={searchNacionalidad}
+                      onChange={e => setSearchNacionalidad(e.target.value)}
+                      className="h-8"
+                      autoFocus={false}
+                    />
+                  </div>
+                  {/* Lista filtrada de países */}
+                  {countries
+                    .filter(country =>
+                      country.name.toLowerCase().includes(searchNacionalidad.toLowerCase())
+                    )
+                    .map((country) => (
+                      <SelectItem key={country.code} value={country.name}>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{country.flag}</span>
+                          <span>{country.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -618,7 +660,11 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Acepto los{" "}
-              <Button variant="link" className="h-auto p-0 text-teal-700 text-sm">
+              <Button 
+                variant="link" 
+                className="h-auto p-0 text-teal-700 text-sm"
+                onClick={() => setIsTermsModalOpen(true)}
+              >
                 términos y condiciones
               </Button>
             </label>
@@ -681,6 +727,9 @@ export function RegisterDialog({ open, onOpenChange }: RegisterDialogProps) {
           </div>
         </form>
       </DialogContent>
+      
+      {/* Modal de Términos y Condiciones */}
+      <TermsModal open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen} />
     </Dialog>
   )
 }

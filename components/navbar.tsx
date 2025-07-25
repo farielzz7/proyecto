@@ -4,7 +4,7 @@
 import { useState } from "react" // Hook para manejar estados
 import Link from "next/link" // Componente para navegación
 import { usePathname } from "next/navigation" // Hook para obtener la ruta actual
-import { Menu, Search, X } from "lucide-react" // Iconos para la interfaz
+import { Menu, Search, X, User, LogOut } from "lucide-react" // Iconos para la interfaz
 
 // Componentes de la interfaz de usuario
 import { Button } from "@/components/ui/button"
@@ -74,6 +74,13 @@ export function Navbar() {
             >
               Mapa Interactivo
             </Link>
+            <Link
+              href="/dashboard"
+              className={`relative flex items-center gap-2 transition-all duration-300 px-4 py-2 rounded-md ${pathname === "/dashboard" ? "text-teal-700 font-semibold bg-teal-100 after:absolute after:bottom-0 after:left-0 after:w-full after:h-1.5 after:bg-teal-600" : "text-gray-700 hover:text-teal-700 hover:bg-teal-50 after:absolute after:bottom-0 after:left-0 after:w-full after:h-1.5 after:bg-teal-600 after:transform after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"}`}
+            >
+              <User className="h-5 w-5" />
+              <span className="hidden md:inline">Perfil</span>
+            </Link>
           </nav>
 
           {/* Botones de autenticación y búsqueda para escritorio */}
@@ -92,6 +99,19 @@ export function Navbar() {
             </Button>
             <Button onClick={() => setIsRegisterOpen(true)} className="bg-teal-700 hover:bg-teal-800 text-white">
               Registrarse
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                // Aquí puedes agregar la lógica de logout
+                console.log('Logout clicked')
+              }}
+              className="text-gray-700 hover:text-red-700"
+              title="Cerrar sesión"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="sr-only">Cerrar sesión</span>
             </Button>
           </div>
 
@@ -152,6 +172,14 @@ export function Navbar() {
             >
               Mapa Interactivo
             </Link>
+            <Link
+              href="/dashboard"
+              className={`flex items-center gap-2 px-3 py-2 rounded-md ${pathname === "/dashboard" ? "text-teal-700 font-semibold bg-teal-100" : "text-gray-700 hover:text-teal-700 hover:bg-teal-50"}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <User className="h-5 w-5" />
+              <span>Perfil</span>
+            </Link>
             <div className="pt-4 border-t flex flex-col space-y-3">
               <Button
                 variant="outline"
@@ -171,6 +199,18 @@ export function Navbar() {
                 className="w-full bg-teal-700 hover:bg-teal-800 text-white"
               >
                 Registrarse
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  // Aquí puedes agregar la lógica de logout
+                  console.log('Logout clicked')
+                  setIsMenuOpen(false)
+                }}
+                className="w-full text-red-700 border-red-700 hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar sesión
               </Button>
             </div>
           </div>

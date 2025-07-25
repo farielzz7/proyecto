@@ -1,105 +1,97 @@
-// Importaciones necesarias para el componente
-import Link from "next/link" // Componente para navegación
-import { Facebook, Instagram, Twitter } from "lucide-react" // Iconos de redes sociales
+"use client"
 
-/**
- * Componente del pie de página
- * Contiene:
- * - Información de la marca
- * - Enlaces a redes sociales
- * - Enlaces a destinos principales
- * - Enlaces útiles y de navegación
- * - Información de contacto
- */
+import Link from "next/link"
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react"
+
+import { TermsModal } from "@/components/terms-modal"
+import { useState } from "react"
+
 export function Footer() {
+  const [isTermsOpen, setIsTermsOpen] = useState(false)
+
   return (
     <footer className="bg-teal-900 text-white">
-      {/* Contenedor principal con diseño responsive */}
       <div className="container mx-auto px-4 py-12">
-        {/* Grid de 4 columnas en desktop, 1 columna en móvil */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Sección de la marca y redes sociales */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Información de la empresa */}
           <div>
-            <h3 className="text-xl font-bold mb-4">GoPlan</h3>
-            <p className="text-teal-100 mb-4">Planifica tu viaje perfecto según tu presupuesto y preferencias</p>
+            <h3 className="text-lg font-semibold mb-4">GoPlan</h3>
+            <p className="text-teal-100 mb-4">
+              Tu compañero perfecto para planificar viajes inolvidables. Descubre destinos únicos 
+              y crea experiencias que durarán toda la vida.
+            </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-white hover:text-amber-400 transition-colors">
+              <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
                 <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
               </Link>
-              <Link href="#" className="text-white hover:text-amber-400 transition-colors">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-white hover:text-amber-400 transition-colors">
+              <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
                 <Instagram className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
+              </Link>
+              <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
+                <Twitter className="h-5 w-5" />
+              </Link>
+              <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
+                <Youtube className="h-5 w-5" />
               </Link>
             </div>
           </div>
-          {/* Sección de enlaces a destinos */}
+
+          {/* Enlaces rápidos */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Destinos</h3>
+            <h3 className="text-lg font-semibold mb-4">Enlaces Rápidos</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  México
+                <Link href="/destinos" className="text-teal-100 hover:text-amber-400 transition-colors">
+                  Destinos
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Guatemala
+                <Link href="/experiencias" className="text-teal-100 hover:text-amber-400 transition-colors">
+                  Experiencias
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Belice
+                <Link href="/planificador" className="text-teal-100 hover:text-amber-400 transition-colors">
+                  Planificador
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Honduras
+                <Link href="/mapa" className="text-teal-100 hover:text-amber-400 transition-colors">
+                  Mapa Interactivo
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  El Salvador
+                <Link href="/dashboard" className="text-teal-100 hover:text-amber-400 transition-colors">
+                  Mi Cuenta
                 </Link>
               </li>
             </ul>
           </div>
-          {/* Sección de enlaces a servicios */}
+
+          {/* Información de contacto */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Servicios</h3>
+            <h3 className="text-lg font-semibold mb-4">Contacto</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Planificador de Viajes
+              <li className="flex items-center text-teal-100">
+                <Mail className="h-4 w-4 mr-2" />
+                <Link href="mailto:info@goplan.com" className="hover:text-amber-400 transition-colors">
+                  info@goplan.com
                 </Link>
               </li>
-              <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Comparador de Precios
+              <li className="flex items-center text-teal-100">
+                <Phone className="h-4 w-4 mr-2" />
+                <Link href="tel:+525512345678" className="hover:text-amber-400 transition-colors">
+                  +52 55 1234 5678
                 </Link>
               </li>
-              <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Guías de Viaje
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Experiencias Locales
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
-                  Asistencia al Viajero
-                </Link>
+              <li className="flex items-center text-teal-100">
+                <MapPin className="h-4 w-4 mr-2" />
+                <span>Ciudad de México, México</span>
               </li>
             </ul>
           </div>
-          {/* Sección de enlaces de soporte */}
+
+          {/* Soporte */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Soporte</h3>
             <ul className="space-y-2">
@@ -114,9 +106,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
+                <button 
+                  onClick={() => setIsTermsOpen(true)}
+                  className="text-teal-100 hover:text-amber-400 transition-colors text-left"
+                >
                   Términos y Condiciones
-                </Link>
+                </button>
               </li>
               <li>
                 <Link href="#" className="text-teal-100 hover:text-amber-400 transition-colors">
@@ -136,6 +131,9 @@ export function Footer() {
           <p>© {new Date().getFullYear()} GoPlan. Todos los derechos reservados.</p>
         </div>
       </div>
+
+      {/* Modal de Términos y Condiciones */}
+      <TermsModal open={isTermsOpen} onOpenChange={setIsTermsOpen} />
     </footer>
   )
 }

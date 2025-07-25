@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 
 export default function MapaPage() {
   // Asegurar que la página se cargue desde arriba
@@ -26,6 +27,48 @@ export default function MapaPage() {
   const closeInfo = () => {
     setShowInfo(false)
   }
+
+  // Datos simulados de lugares turísticos
+  const lugares = [
+    {
+      nombre: 'Chichén Itzá',
+      posicion: { lat: 20.6843, lng: -88.5678 },
+      categoria: 'arqueologico',
+    },
+    {
+      nombre: 'Tulum',
+      posicion: { lat: 20.2110, lng: -87.4654 },
+      categoria: 'arqueologico',
+    },
+    {
+      nombre: 'Tikal',
+      posicion: { lat: 17.2220, lng: -89.6237 },
+      categoria: 'arqueologico',
+    },
+    {
+      nombre: 'Mérida',
+      posicion: { lat: 20.9674, lng: -89.5926 },
+      categoria: 'cultural',
+    },
+    {
+      nombre: 'Bacalar',
+      posicion: { lat: 18.6746, lng: -88.3972 },
+      categoria: 'cenote',
+    },
+  ] as const;
+
+  type Categoria = typeof lugares[number]["categoria"];
+
+  const iconos: Record<Categoria, string> = {
+    arqueologico: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+    cultural: 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+    cenote: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+  };
+
+  // Cargar Google Maps API
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+  })
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -197,72 +240,34 @@ export default function MapaPage() {
         {/* Mapa */}
         <div className="lg:col-span-3">
           <div className="relative w-full h-[700px] bg-stone-100 rounded-xl overflow-hidden border">
-            {/* Mapa simulado */}
-            <div className="relative w-full h-full">
-              <Image
-                src="/placeholder.svg?height=1400&width=1400"
-                alt="Mapa de sitios mayas"
-                fill
-                className="object-cover"
-              />
+            {isLoaded && (
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={{ lat: 20.6843, lng: -88.5678 }}
+                zoom={6}
+              >
+                {lugares.map((lugar) => (
+                  <Marker
+                    key={lugar.nombre}
+                    position={lugar.posicion}
+                    icon={iconos[lugar.categoria]}
+                    onClick={() => handleLocationClick(lugar.nombre)}
+                  />
+                ))}
+              </GoogleMap>
+            )}
 
-              {/* Controles del mapa */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
-                <Button variant="secondary" size="icon" className="bg-white shadow-md">
-                  <Layers className="h-4 w-4" />
-                </Button>
-                <Button variant="secondary" size="icon" className="bg-white shadow-md">
-                  <Compass className="h-4 w-4" />
-                </Button>
-                <Button variant="secondary" size="icon" className="bg-white shadow-md">
-                  <Info className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Marcadores simulados */}
-              <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full bg-teal-700 text-white hover:bg-teal-800"
-                  onClick={() => handleLocationClick("Chichén Itzá")}
-                >
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="absolute top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full bg-teal-700 text-white hover:bg-teal-800"
-                  onClick={() => handleLocationClick("Tulum")}
-                >
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="absolute bottom-1/3 right-1/3 transform -translate-x-1/2 -translate-y-1/2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full bg-teal-700 text-white hover:bg-teal-800"
-                  onClick={() => handleLocationClick("Tikal")}
-                >
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="absolute top-2/3 left-2/3 transform -translate-x-1/2 -translate-y-1/2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="rounded-full bg-amber-600 text-white hover:bg-amber-700"
-                  onClick={() => handleLocationClick("Mérida")}
-                >
-                  <MapPin className="h-4 w-4" />
-                </Button>
-              </div>
+            {/* Controles del mapa */}
+            <div className="absolute top-4 right-4 flex flex-col gap-2">
+              <Button variant="secondary" size="icon" className="bg-white shadow-md">
+                <Layers className="h-4 w-4" />
+              </Button>
+              <Button variant="secondary" size="icon" className="bg-white shadow-md">
+                <Compass className="h-4 w-4" />
+              </Button>
+              <Button variant="secondary" size="icon" className="bg-white shadow-md">
+                <Info className="h-4 w-4" />
+              </Button>
             </div>
 
             {/* Panel de información */}

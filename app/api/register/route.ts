@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const { nombre, apellido, nacionalidad, edad, telefono, email, password, password_confirmation, acepta_terminos } = await request.json();
 
     // Replace with your actual PHP backend API URL
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL_REGISTER || 'http://localhost:8000/api/register';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL_REGISTER || 'https://uni-djzy.onrender.com/api/register';
 
     const response = await fetch(backendUrl, {
       method: 'POST',

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TermsModal } from "@/components/terms-modal"
 
 // Datos simulados para los destinos
 const destinosData = {
@@ -105,6 +106,7 @@ export default function CheckoutPage() {
   })
 
   const [participants, setParticipants] = useState(2)
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -435,9 +437,13 @@ export default function CheckoutPage() {
                 <div className="text-xs text-muted-foreground">
                   <p className="mb-2">
                     Al completar esta reserva, aceptas nuestros{" "}
-                    <Link href="#" className="text-teal-700 hover:underline">
+                    <Button
+                      variant="link"
+                      className="h-auto p-0 text-teal-700 hover:underline text-xs"
+                      onClick={() => setIsTermsModalOpen(true)}
+                    >
                       términos y condiciones
-                    </Link>{" "}
+                    </Button>{" "}
                     y{" "}
                     <Link href="#" className="text-teal-700 hover:underline">
                       política de privacidad
@@ -494,6 +500,9 @@ export default function CheckoutPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Términos y Condiciones */}
+      <TermsModal open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen} />
     </div>
   )
 }

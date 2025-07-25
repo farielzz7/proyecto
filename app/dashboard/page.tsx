@@ -23,6 +23,7 @@ export default function DashboardPage() {
             <TabsTrigger value="trips">Mis Viajes</TabsTrigger>
             <TabsTrigger value="saved">Guardados</TabsTrigger>
             <TabsTrigger value="budget">Presupuesto</TabsTrigger>
+            <TabsTrigger value="profile">Perfil</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -187,6 +188,51 @@ export default function DashboardPage() {
                 />
               </div>
             </div>
+          </TabsContent>
+          <TabsContent value="profile" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Perfil del Turista</CardTitle>
+                <CardDescription>Información personal del usuario</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <Image
+                    src="/placeholder-user.jpg"
+                    alt="Foto de perfil"
+                    width={120}
+                    height={120}
+                    className="rounded-full border"
+                  />
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="font-semibold">Nombre:</p>
+                      <p>Juan</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Apellido:</p>
+                      <p>Pérez</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Nacionalidad:</p>
+                      <p>Mexicana</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Edad:</p>
+                      <p>30</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Teléfono:</p>
+                      <p>+52 123 456 7890</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Email:</p>
+                      <p>juan.perez@email.com</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

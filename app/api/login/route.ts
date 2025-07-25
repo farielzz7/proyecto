@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     const { email, password, remember_me } = await request.json();
 
     // Replace with your actual PHP backend API URL
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api/login';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://uni-djzy.onrender.com/api/login';
 
     const response = await fetch(backendUrl, {
       method: 'POST',
