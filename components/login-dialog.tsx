@@ -42,8 +42,10 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
         },
         body: JSON.stringify({ email, password }),
       })
-
       const data = await response.json()
+      if (data.success && data.data?.token) {
+        localStorage.setItem('token', data.data.token)
+      }
 
       if (response.ok) {
         console.log("Login exitoso:", data)

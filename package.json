@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "goplan",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -48,6 +48,7 @@
     "lucide-react": "^0.454.0",
     "next": "15.1.0",
     "next-themes": "^0.4.4",
+    "puppeteer": "^24.15.0",
     "react": "^19",
     "react-day-picker": "8.10.1",
     "react-dom": "^19",

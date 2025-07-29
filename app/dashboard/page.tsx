@@ -1,13 +1,64 @@
-import { Compass, CreditCard, MapPin, User } from "lucide-react"
-import Image from "next/image"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TravelDestinationCard } from "@/components/travel-destination-card"
+import { Compass, CreditCard, MapPin, User } from "lucide-react";
+import Image from "next/image";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TravelDestinationCard } from "@/components/travel-destination-card";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
+  const [profile, setProfile] = useState<any>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [errorProfile, setErrorProfile] = useState<string | null>(null);
+
+  console.log('Current profile state:', { profile, loadingProfile, errorProfile });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoadingProfile(true);
+      setErrorProfile(null);
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        console.log('Token encontrado:', token ? 'Sí' : 'No');
+        
+        if (!token) {
+          setErrorProfile('No hay token de autenticación');
+          setLoadingProfile(false);
+          return;
+        }
+
+        const res = await fetch('https://uni-djzy.onrender.com/api/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        console.log('Response status:', res.status);
+        const data = await res.json();
+        console.log('Response data:', data);
+        
+        if (data.success) {
+          setProfile(data.data.user);
+          console.log('Profile set:', data.data.user);
+        } else {
+          setErrorProfile(data.message || 'No se pudo obtener el perfil');
+        }
+      } catch (e) {
+        console.error('Error fetching profile:', e);
+        setErrorProfile('Error de red o servidor');
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
@@ -110,51 +161,23 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex items-center">
-                      <div className="w-1/2">
-                        <div className="text-sm font-medium">Hospedaje</div>
-                        <div className="text-xs text-muted-foreground">$850</div>
+                    {[
+                      { label: 'Hospedaje', value: 42, amount: '$850' },
+                      { label: 'Transporte', value: 22, amount: '$450' },
+                      { label: 'Comida', value: 19, amount: '$380' },
+                      { label: 'Actividades', value: 16, amount: '$320' },
+                      { label: 'Otros', value: 1, amount: '$20' },
+                    ].map((item) => (
+                      <div className="flex items-center" key={item.label}>
+                        <div className="w-1/2">
+                          <div className="text-sm font-medium">{item.label}</div>
+                          <div className="text-xs text-muted-foreground">{item.amount}</div>
+                        </div>
+                        <div className="w-1/2">
+                          <Progress value={item.value} className="h-2" />
+                        </div>
                       </div>
-                      <div className="w-1/2">
-                        <Progress value={42} className="h-2" />
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-1/2">
-                        <div className="text-sm font-medium">Transporte</div>
-                        <div className="text-xs text-muted-foreground">$450</div>
-                      </div>
-                      <div className="w-1/2">
-                        <Progress value={22} className="h-2" />
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-1/2">
-                        <div className="text-sm font-medium">Comida</div>
-                        <div className="text-xs text-muted-foreground">$380</div>
-                      </div>
-                      <div className="w-1/2">
-                        <Progress value={19} className="h-2" />
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-1/2">
-                        <div className="text-sm font-medium">Actividades</div>
-                        <div className="text-xs text-muted-foreground">$320</div>
-                      </div>
-                      <div className="w-1/2">
-                        <Progress value={16} className="h-2" />
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-1/2">
-                        <div className="text-sm font-medium">Otros</div>
-                        <div className="text-xs text-muted-foreground">$20</div>
-                      </div>
-                      <div className="w-1/2">
-                        <Progress value={1} className="h-2" />
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -196,47 +219,60 @@ export default function DashboardPage() {
                 <CardDescription>Información personal del usuario</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col md:flex-row gap-8 items-center">
-                  <Image
-                    src="/placeholder-user.jpg"
-                    alt="Foto de perfil"
-                    width={120}
-                    height={120}
-                    className="rounded-full border"
-                  />
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="font-semibold">Nombre:</p>
-                      <p>Juan</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Apellido:</p>
-                      <p>Pérez</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Nacionalidad:</p>
-                      <p>Mexicana</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Edad:</p>
-                      <p>30</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Teléfono:</p>
-                      <p>+52 123 456 7890</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Email:</p>
-                      <p>juan.perez@email.com</p>
+                {loadingProfile ? (
+                  <div className="text-center py-8">Cargando perfil...</div>
+                ) : errorProfile ? (
+                  <div className="text-center text-red-600 py-8">
+                    <p>{errorProfile}</p>
+                    <p className="text-sm mt-2">Debug: loading={loadingProfile.toString()}, profile={profile ? 'exists' : 'null'}</p>
+                  </div>
+                ) : profile ? (
+                  <div className="flex flex-col md:flex-row gap-8 items-center">
+                    <Image
+                      src="/placeholder-user.jpg"
+                      alt="Foto de perfil"
+                      width={120}
+                      height={120}
+                      className="rounded-full border"
+                    />
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="font-semibold">Nombre:</p>
+                        <p>{profile.turista?.nombre || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Apellido:</p>
+                        <p>{profile.turista?.apellido || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Nacionalidad:</p>
+                        <p>{profile.turista?.nacionalidad || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Edad:</p>
+                        <p>{profile.turista?.edad || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Teléfono:</p>
+                        <p>{profile.turista?.telefono || '-'}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Email:</p>
+                        <p>{profile.email || '-'}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p>No se encontró información de perfil.</p>
+                    <p className="text-sm mt-2">Debug: loading={loadingProfile.toString()}, error={errorProfile || 'none'}</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
-
