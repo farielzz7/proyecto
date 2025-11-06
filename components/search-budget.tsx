@@ -15,6 +15,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 
 // Componente principal para la búsqueda por presupuesto
+const numberFormatter = new Intl.NumberFormat("es-ES")
+
+const sanitizeBudgetInput = (value: string) => value.replace(/[^\d]/g, "")
+
 export function SearchBudget() {
   // Estados para manejar los diferentes campos del formulario
   const [budget, setBudget] = useState("") // Presupuesto del viaje
@@ -22,11 +26,32 @@ export function SearchBudget() {
   const [travelers, setTravelers] = useState({ adults: 1, children: 0 }) // Número de viajeros
   const [startDate, setStartDate] = useState<Date>() // Fecha de inicio del viaje
   const [endDate, setEndDate] = useState<Date>() // Fecha de fin del viaje
+  const [formError, setFormError] = useState<string | null>(null)
 
   // Manejador del evento de búsqueda
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault() // Previene el comportamiento por defecto del formulario
-    console.log("Búsqueda con:", { budget, origin, travelers, startDate, endDate }) // Muestra los datos de búsqueda en consola
+    const numericBudget = budget ? Number(budget) : null
+
+    if (!numericBudget) {
+      setFormError("Ingresa un presupuesto válido.")
+      return
+    }
+
+    if (!startDate || !endDate) {
+      setFormError("Selecciona un rango de fechas.")
+      return
+    }
+
+    setFormError(null)
+
+    console.log("Búsqueda con:", {
+      budget: numericBudget,
+      origin,
+      travelers,
+      startDate,
+      endDate,
+    }) // Muestra los datos de búsqueda en consola
   }
 
   // Función para actualizar el número de viajeros
@@ -47,17 +72,16 @@ export function SearchBudget() {
           <Input
             id="budget"
             type="text"
-            placeholder="Ej. 1000"
-            value={budget === "" ? "" : new Intl.NumberFormat('es-ES').format(Number(budget))}
+            inputMode="numeric"
+            placeholder="Ej. 1.000"
+            value={budget === "" ? "" : numberFormatter.format(Number(budget))}
             onChange={(e) => {
-              let inputValue = e.target.value
-              inputValue = inputValue.replace(/\./g, '')
-              inputValue = inputValue.replace(/,/g, '.')
-              if (inputValue === '' || /^-?\d*\.?\d*$/.test(inputValue)) {
-                setBudget(inputValue)
-              }
+              const sanitized = sanitizeBudgetInput(e.target.value)
+              setBudget(sanitized)
+              setFormError(null)
             }}
             className="w-full"
+            aria-invalid={formError !== null}
           />
         </div>
 
@@ -175,6 +199,7 @@ export function SearchBudget() {
                 onSelect={(range) => {
                   setStartDate(range?.from)
                   setEndDate(range?.to)
+                  setFormError(null)
                 }}
                 numberOfMonths={2}
                 locale={es}
@@ -189,6 +214,11 @@ export function SearchBudget() {
           </Button>
         </div>
       </div>
+      {formError ? (
+        <p className="mt-4 text-sm text-red-600" role="alert">
+          {formError}
+        </p>
+      ) : null}
     </form>
   )
 }

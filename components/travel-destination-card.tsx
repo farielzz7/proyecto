@@ -3,6 +3,12 @@ import Image from "next/image" // Componente optimizado para imágenes
 import Link from "next/link" // Componente para navegación
 import { MapPin, Star } from "lucide-react" // Iconos
 
+const priceFormatter = new Intl.NumberFormat("es-MX", {
+  style: "currency",
+  currency: "MXN",
+  maximumFractionDigits: 0,
+})
+
 // Componentes de UI
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -38,7 +44,7 @@ export function TravelDestinationCard({
           alt={title}
           fill
           className="object-cover"
-          unoptimized={image.startsWith("http")}
+          sizes="(min-width: 1024px) 400px, (min-width: 768px) 50vw, 100vw"
         />
         <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md text-sm font-medium flex items-center">
           <Star className="h-4 w-4 text-amber-500 mr-1 fill-amber-500" />
@@ -54,7 +60,7 @@ export function TravelDestinationCard({
         <div className="flex justify-between items-center">
           <div>
             <span className="text-sm text-muted-foreground">Desde</span>
-            <p className="text-lg font-bold text-teal-700">${price}</p>
+            <p className="text-lg font-bold text-teal-700">{priceFormatter.format(price)}</p>
           </div>
           <div className="text-sm text-muted-foreground">por persona</div>
         </div>
