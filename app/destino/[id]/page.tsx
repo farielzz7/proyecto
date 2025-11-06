@@ -1,9 +1,10 @@
 import DestinoDetailContent from "./destino-detail-content"
 
 type DestinoDetailPageProps = {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
-export default function DestinoDetailPage({ params }: DestinoDetailPageProps) {
-  return <DestinoDetailContent destinoId={params.id} />
+export default async function DestinoDetailPage({ params }: DestinoDetailPageProps) {
+  const { id } = await params
+  return <DestinoDetailContent destinoId={id} />
 }
